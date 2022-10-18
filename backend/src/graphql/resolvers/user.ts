@@ -1,21 +1,19 @@
 // query mutation or subscription resolver
 
 const resolvers = {
-Query:{
-searchUsers: () => {
+  Query: {
+    searchUsers: () => {},
+  },
+  Mutation: {
+    createUsername: (_: any, args: {username: string}, context: any) => {
+        const {username} =  args
+      console.log("does it work?", username);
+    },
+  },
 
-}
-},
-Mutation: {
-createUsername: () => {
+  // Subscription: {
 
-}
+  // }
+};
 
-},
-
-// Subscription: {
-
-// }
-}
-
-export default resolvers
+export default resolvers;
