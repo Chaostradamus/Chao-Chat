@@ -13,9 +13,9 @@ createUsername: () => {
 
 },
 
-Subscription: {
+// Subscription: {
 
-}
+// }
 }
 
 export default resolvers
