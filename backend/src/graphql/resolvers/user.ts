@@ -1,13 +1,52 @@
 // query mutation or subscription resolver
+import { CreateUsernameResponse, GraphQLContext } from "../../util/types";
 
 const resolvers = {
   Query: {
     searchUsers: () => {},
   },
   Mutation: {
-    createUsername: (_: any, args: {username: string}, context: any) => {
-        const {username} =  args
-      console.log("does it work?", username);
+    createUsername: async (
+      _: any,
+      args: { username: string },
+      context:GraphQLContext
+    ): Promise<CreateUsernameResponse> => {
+      const { username } = args;
+      const { session, prisma } = context;
+
+      if (!session?.user) {
+        return {
+          error: "Not authorized",
+        };
+      }
+
+      const { id: userId } = session.user;
+
+      try {
+        const existingUser = await prisma.user.findUnique({
+          where: {
+            username,
+          },
+        });
+
+        if (existingUser) {
+          return {
+            error: "User already taken. try another",
+          };
+        }
+        await prisma.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            username,
+          },
+        });
+        return { success: true };
+      } catch (error) {
+        console.log("createUsername Error", error);
+        return { error: error?.message };
+      }
     },
   },
 
