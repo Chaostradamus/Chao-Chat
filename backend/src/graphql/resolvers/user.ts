@@ -1,5 +1,6 @@
 // query mutation or subscription resolver
 import { CreateUsernameResponse, GraphQLContext } from "../../util/types";
+import { ApolloError } from "apollo-server-core";
 
 const resolvers = {
   Query: {
@@ -43,9 +44,11 @@ const resolvers = {
           },
         });
         return { success: true };
-      } catch (error) {
+      } catch (error: any) {
         console.log("createUsername Error", error);
-        return { error: error?.message };
+        return {
+          error: error?.message,
+        };
       }
     },
   },
