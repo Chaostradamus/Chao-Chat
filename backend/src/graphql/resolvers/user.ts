@@ -4,13 +4,36 @@ import { ApolloError } from "apollo-server-core";
 
 const resolvers = {
   Query: {
-    searchUsers: () => {},
+    searchUsers: async (
+      _: any,
+      args: { username: string },
+      context: GraphQLContext
+    ) => {
+      const { username: searchedUsername } = args;
+      const { session, prisma } = context;
+
+      if (!session?.user) {
+        throw new ApolloError("Not legit mah man");
+      }
+
+      const {
+        user: { username: myUsername },
+      } = session;
+
+      try {
+        const users = await prisma.user.findMany()
+      } catch (error: any){
+          console.log('searchUsers error', error)
+          throw new ApolloError(error?.message)
+      }
+    },
   },
+
   Mutation: {
     createUsername: async (
       _: any,
       args: { username: string },
-      context:GraphQLContext
+      context: GraphQLContext
     ): Promise<CreateUsernameResponse> => {
       const { username } = args;
       const { session, prisma } = context;
